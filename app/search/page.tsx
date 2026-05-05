@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { auctions } from "@/data/auctions";
 import AuctionCard from "@/components/auction-card";
 import CategorySidebar from "@/components/category-sidebar";
@@ -12,12 +12,28 @@ import Pagination from "@/components/pagination";
 const PER_PAGE = 6;
 
 export default function SearchPage() {
-  // Read search query from URL (set by the header)
+  const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Read query AND category from URL
   const query = searchParams.get("q") ?? "";
+  const activeCategory = searchParams.get("category");
+
+  // Update category in URL (called by sidebar)
+  const handleCategoryChange = useCallback(
+    (slug: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (slug) {
+        params.set("category", slug);
+      } else {
+        params.delete("category");
+      }
+      router.push(`/search?${params.toString()}`);
+    },
+    [router, searchParams],
+  );
 
   // Local state for other controls
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [freeShippingOnly, setFreeShippingOnly] = useState(false);
   const [localPickupOnly, setLocalPickupOnly] = useState(false);
   const [digitalOnly, setDigitalOnly] = useState(false);
@@ -99,7 +115,7 @@ export default function SearchPage() {
         <div className="lg:w-64 lg:shrink-0 space-y-4">
           <CategorySidebar
             activeSlug={activeCategory}
-            onChange={setActiveCategory}
+            onChange={handleCategoryChange}
           />
           <FiltersPanel
             freeShippingOnly={freeShippingOnly}

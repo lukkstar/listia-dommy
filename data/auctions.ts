@@ -202,7 +202,7 @@ export const auctions: Auction[] = [
   {
     id: "19",
     title: "Sony Alpha 50mm Prime Lens",
-    imageUrl: "https-//picsum.photos/seed/lens1/400/400",
+    imageUrl: "https://picsum.photos/seed/lens1/400/400",
     bidPoints: 165000,
     endsAt: "2026-05-08",
     shipsFree: true,
